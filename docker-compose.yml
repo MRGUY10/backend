@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  service-discovery:
+    build: ./service_discovery
+    container_name: service-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8060:8060"
+    depends_on:
+      - service-discovery
+    networks:
+      - app-network
+
+  auth-service:
+    build: ./authentication_service
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - service-discovery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/authDB?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+  candidate-service:
+    build: ./Candidate_Service
+    container_name: candidate-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - mysql
+      - service-discovery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/candidateDB?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+  admission-service:
+    build: ./application_service
+    container_name: admission-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+      - service-discovery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/AdmissionDB?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+  event-service:
+    build: ./event_management_service
+    container_name: event-service
+    ports:
+      - "8089:8089"
+    depends_on:
+      - mysql
+      - service-discovery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/EventDB?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+  task-service:
+    build: ./task_service
+    container_name: task-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - mysql
+      - service-discovery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/TaskDB?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+  notification-service:
+    build: ./notification_service
+    container_name: notification-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mysql
+      - service-discovery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/NotificationDB?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

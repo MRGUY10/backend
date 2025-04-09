@@ -1,0 +1,73 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CandidateApplication",
+            "request": "launch",
+            "mainClass": "com.crm.authservice.auth_api1.CandidateApplication",
+            "projectName": "Auth_Api1"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ApiGatewayApplication<com.telusko-api-gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.telusko.apigateway.ApiGatewayApplication",
+            "projectName": "com.telusko-api-gateway",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=51155 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=com.telusko-api-gateway"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ServiceDiscoveryApplication<com.codingworld-service-discovery>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.codingworld.servicediscovery.ServiceDiscoveryApplication",
+            "projectName": "com.codingworld-service-discovery",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=51096 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=com.codingworld-service-discovery"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthApi1Application<Auth_Api1>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.crm.authservice.auth_api1.AuthApi1Application",
+            "projectName": "Auth_Api1",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ApplicationServiceApplication<org.example-application_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.example.application_service.ApplicationServiceApplication",
+            "projectName": "org.example-application_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ApplicationManagementServiceApplication<org.crm.student-Application_Management_Service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.crm.student.application_management_service.ApplicationManagementServiceApplication",
+            "projectName": "org.crm.student-Application_Management_Service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Main<gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.telusko.Main",
+            "projectName": "gateway",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

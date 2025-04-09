@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Auth_Api1" />
+        <module name="Application_Management_Service" />
+        <module name="Notification_Service" />
+        <module name="Event_Management_System" />
+        <module name="Auth_Api1 (1)" />
+        <module name="api-gateway" />
+        <module name="Task_Management_Service" />
+        <module name="service-discovery" />
+      </profile>
+      <profile name="Annotation profile for application_service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="application_service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="candidate_service" target="17" />
+      <module name="gateway" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Application_Management_Service" options="-parameters" />
+      <module name="Auth_Api1" options="-parameters" />
+      <module name="Auth_Api1 (1)" options="-parameters" />
+      <module name="Event_Management_System" options="-parameters" />
+      <module name="Notification_Service" options="-parameters" />
+      <module name="Task_Management_Service" options="-parameters" />
+      <module name="api-gateway" options="-parameters" />
+      <module name="application_service" options="-parameters" />
+      <module name="candidate_service" options="-parameters" />
+      <module name="service-discovery" options="-parameters" />
+    </option>
+  </component>
+</project>
