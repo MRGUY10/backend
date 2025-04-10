@@ -75,9 +75,9 @@ services:
     networks:
       - app-network
 
-  admission-service:
+  application-service:
     build: ./application_service
-    container_name: admission-service
+    container_name: application-service
     ports:
       - "8082:8082"
     depends_on:
@@ -111,12 +111,7 @@ services:
     ports:
       - "8084:8084"
     depends_on:
-      - mysql
       - service-discovery
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/TaskDB?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
     networks:
       - app-network
 
