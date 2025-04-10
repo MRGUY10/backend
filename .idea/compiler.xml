@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Auth_Api1" />
         <module name="Application_Management_Service" />
+        <module name="Notification_Service" />
         <module name="Event_Management_System" />
         <module name="Auth_Api1 (1)" />
         <module name="api-gateway" />
@@ -28,7 +29,6 @@
     <bytecodeTargetLevel>
       <module name="candidate_service" target="17" />
       <module name="gateway" target="1.8" />
-      <module name="Notification_Service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

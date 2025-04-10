@@ -28,11 +28,9 @@ server:
     context-path: /student/
 
 eureka:
-  instance:
-    hostname: localhost
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+    service-url:
+      defaultZone: http://20.11.21.61:8761/eureka/
 
 management:
   tracing:
