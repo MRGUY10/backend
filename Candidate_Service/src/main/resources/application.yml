@@ -6,7 +6,7 @@ eureka:
     prefer-ip-address: true
 spring:
   application:
-    name: application-service
+    name: candidate-service
 
 
 
