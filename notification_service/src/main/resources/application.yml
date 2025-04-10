@@ -37,10 +37,10 @@ spring:
       mail.smtp.timeout: 3000
       mail.smtp.writetimeout: 5000
 
-  twilio:
-    accountSid: AC63598fb1b3c057cd728745a4c016188e
-    authToken: feb1ef7f7578e67b798c5586b6a577b9
-    phoneNumber: +14437072566
+twilio:
+  accountSid: ${TWILIO_ACCOUNT_SID}
+  authToken: ${TWILIO_AUTH_TOKEN}
+
 
 server:
   port: 8085
