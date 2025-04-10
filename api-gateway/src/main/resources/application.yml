@@ -68,7 +68,7 @@ spring:
             - RewritePath=/student/(?<path>.*), /${path}
 
         - id: user-service
-          uri: lb://user-service
+          uri: lb:http://user-service
           predicates:
             - Path=/api/v1/**
 

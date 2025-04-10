@@ -2,13 +2,6 @@ spring:
   application:
     name: user-service
 
-  cloud:
-    discovery:
-      client:
-        simple:
-          eureka:
-            enabled: true
-            serviceUrl: http://localhost:8761/eureka/
 
   profiles:
     active: dev
