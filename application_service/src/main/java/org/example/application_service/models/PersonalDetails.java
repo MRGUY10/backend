@@ -30,6 +30,15 @@ public class PersonalDetails {
     private String email;
     private LocalDate dateOfBirth;
     private String phoneNumber;
+    private Program program;  // New field to store program type
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
 
     @OneToOne
     @JoinColumn(name = "application_id")

@@ -43,7 +43,7 @@ import java.util.Optional;
 @RequestMapping("auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication")
-// @CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AuthenticationController {
 
     private final AuthenticationService service;

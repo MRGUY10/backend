@@ -414,4 +414,13 @@ public class AuthenticationService {
                 .build()
         ).collect(Collectors.toList());
     }
+    @Transactional
+    public User updateMatricule(String oldMatricule, String newMatricule) {
+        User user = (User) userRepository.findByMatricule(oldMatricule)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with matricule: " + oldMatricule));
+
+        // Update matricule
+        user.setMatricule(newMatricule);
+        return userRepository.save(user);
+    }
 }

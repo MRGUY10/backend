@@ -227,4 +227,13 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    @PutMapping("/update-matricule/{oldMatricule}")
+    public ResponseEntity<User> updateMatricule(
+            @PathVariable String oldMatricule,
+            @RequestParam String newMatricule) {
+        User updatedUser = authenticationService.updateMatricule(oldMatricule, newMatricule);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
 }

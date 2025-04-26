@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @Service
 public class ApplicationService {
+
     @Autowired
     private ApplicationRepository applicationRepository;
 
@@ -28,28 +30,26 @@ public class ApplicationService {
     private EmailService emailService;
 
     @Autowired
-    private PersonalDetailsRepository personalDetailsRepository;
-    @Autowired
     private RestTemplate restTemplate;
-    private String authServiceUrl = "http://localhost:8080";
+
+    private String authServiceUrl = "http://localhost:8087";
 
     @Autowired
     private EducationDetailsRepository educationDetailsRepository;
 
     @Autowired
     private FamilyDetailsRepository familyDetailsRepository;
+
     @Autowired
-    private DocumentRepository documentRepository;  // Inject the DocumentRepository
+    private DocumentRepository documentRepository;
 
     // Step 1: Initialize application
     public Application initializeApplication(Application application) {
-        if (application.getMatricule() == null || application.getProgram() == null) {
-            throw new IllegalArgumentException("Matricule, and Program selection are required");
+        if (application.getProgram() == null) {
+            throw new IllegalArgumentException("Program selection is required");
         }
 
-        // Check if the candidate has already applied for this program
         Optional<Application> existingApplication = applicationRepository.findByMatriculeAndProgram(application.getMatricule(), application.getProgram());
-
         if (existingApplication.isPresent()) {
             throw new IllegalStateException("You have already applied for the " + application.getProgram() + " program.");
         }
@@ -57,27 +57,11 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
-
-
-    // Step 2: Save Personal Details
-    public Application updatePersonalDetails(Long applicationId, PersonalDetails details) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
-
-        // You can update personal details even after submission
-        details.setApplication(application);
-        personalDetailsRepository.save(details);
-        application.setPersonalDetails(details);
-
-        return applicationRepository.save(application);
-    }
-
-    // Step 3: Save Education Details
+    // Step 2: Save Education Details
     public Application updateEducationDetails(Long applicationId, EducationDetails details) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        // You can update education details even after submission
         details.setApplication(application);
         educationDetailsRepository.save(details);
         application.setEducationDetails(details);
@@ -85,11 +69,11 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
+    // Step 3: Save Family Details
     public Application updateFamilyDetails(Long applicationId, FamilyDetails details) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        // You can update family details even after submission
         details.setApplication(application);
         familyDetailsRepository.save(details);
         application.setFamilyDetails(details);
@@ -97,63 +81,47 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
-    // Step 5: Submit Application
+    // Step 4: Submit Application
     public Application submitApplication(Long applicationId) {
-        // Fetch the application from the database
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        // Check if all details are filled
-        if (application.getPersonalDetails() == null ||
+        if (application.getFirstName() == null ||
+                application.getLastName() == null ||
+                application.getEmail() == null ||
+                application.getPhoneNumber() == null ||
                 application.getEducationDetails() == null ||
                 application.getFamilyDetails() == null) {
             throw new IllegalStateException("All details must be completed before submitting the application.");
         }
 
-        // Set the status to SUBMITTED
         application.setStatus(ApplicationStatus.SUBMITTED);
-
-        // Set the submission date to the current date and time
         application.setSubmissionDate(LocalDateTime.now());
 
-        // Save the updated application
         return applicationRepository.save(application);
     }
 
-
-    // Update the application status and matricule
-    // Update the application status and matricule
+    // Step 5: Update Application Status
     public Application updateApplicationStatus(Long applicationId, ApplicationStatus status) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        // Prevent further updates if status is already STUDENT
         if (application.getStatus() == ApplicationStatus.STUDENT) {
             throw new RuntimeException("Status cannot be updated once the candidate is a student");
         }
 
         application.setStatus(status);
 
-        // If the status is changing to STUDENT, update the matricule
         if (status == ApplicationStatus.STUDENT) {
-            String programCode = getProgramCode(application.getProgram());
+            String programCode = getProgramCode(String.valueOf(application.getProgram()));
             String uniqueNumber = String.format("%04d", application.getId());
             String year = String.valueOf(java.time.Year.now().getValue());
 
             String newMatricule = year + programCode + uniqueNumber;
 
-            // Get the old matricule before updating
             String oldMatricule = application.getMatricule();
-
             application.setMatricule(newMatricule);
 
-            // Set the matricule in PersonalDetails
-            if (application.getPersonalDetails() != null) {
-                application.getPersonalDetails().setMatricule(newMatricule);
-                personalDetailsRepository.save(application.getPersonalDetails());
-            }
-
-            // Ensure oldMatricule is not null before updating the authentication service
             if (oldMatricule != null) {
                 updateAuthServiceWithMatricule(oldMatricule, newMatricule);
             } else {
@@ -161,19 +129,18 @@ public class ApplicationService {
             }
         }
 
-        // Save the updated Application
         applicationRepository.save(application);
 
-        // Send a tailored email based on the status
         sendStatusEmail(application, status);
 
         return application;
     }
 
     private void sendStatusEmail(Application application, ApplicationStatus status) {
-        String candidateEmail = application.getPersonalDetails().getEmail();
+        String candidateEmail = application.getEmail();
+        String candidateFirstName = application.getFirstName();
         String subject = "Application Status Update";
-        String htmlBody = generateHtmlTemplate(application.getPersonalDetails().getFirstName(), status);
+        String htmlBody = generateHtmlTemplate(candidateFirstName, status);
 
         emailService.sendEmail(candidateEmail, subject, htmlBody);
     }
@@ -244,23 +211,32 @@ public class ApplicationService {
         }
     }
 
-    // Method to update the matricule in Auth Service
     private void updateAuthServiceWithMatricule(String oldMatricule, String newMatricule) {
-        String url = authServiceUrl + "/api/v1/candidate/update-matricule/" + oldMatricule;
+        // Construct URL with path variable
+        String url = authServiceUrl + "/api/v1/candidate/update-matricule/{oldMatricule}";
 
-        // Correct request body
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("matricule", newMatricule);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(requestBody, headers);
+        // Using URI template with path variable and request param
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
+                .queryParam("newMatricule", newMatricule);
 
         try {
-            restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+            // Make the PUT request with null body (since we're using query parameters)
+            ResponseEntity<String> response = restTemplate.exchange(
+                    builder.buildAndExpand(oldMatricule).toUri(),
+                    HttpMethod.PUT,
+                    null,  // No request body needed
+                    String.class
+            );
+
+            // Verify successful response
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("Auth service returned status: " + response.getStatusCode());
+            }
+
         } catch (HttpServerErrorException e) {
-            System.err.println("Error while updating matricule in auth service: " + e.getResponseBodyAsString());
+            throw new RuntimeException("Auth service error: " + e.getResponseBodyAsString(), e);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to communicate with auth service: " + e.getMessage(), e);
         }
     }
 

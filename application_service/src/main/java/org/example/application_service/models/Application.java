@@ -1,109 +1,51 @@
 package org.example.application_service.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Data
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Application {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
-    private String matricule;
+
     @Enumerated(EnumType.STRING)
-    private Program program;  // New field to store program type
     private ApplicationStatus status = ApplicationStatus.DRAFT;
+
     private LocalDateTime submissionDate;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
-    private PersonalDetails personalDetails;
+    // Personal details fields directly
+    @Column(nullable = false)
+    private String matricule;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
+    private String firstName;
+    private String lastName;
+    private String nationality;
+    private String regionOfOrigin;
+    private String address;
+    private String whatsappNumber;
+    private String email;
+    private LocalDate dateOfBirth;
+    private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    private Program program;
+
+    // Other linked entities
+    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     private EducationDetails educationDetails;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     private FamilyDetails familyDetails;
 
-    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getMatricule() {
-        return matricule;
-    }
-
-    public void setMatricule(String matricule) {
-        this.matricule = matricule;
-    }
-
-    public ApplicationStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ApplicationStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getSubmissionDate() {
-        return submissionDate;
-    }
-
-    public void setSubmissionDate(LocalDateTime submissionDate) {
-        this.submissionDate = submissionDate;
-    }
-
-    public PersonalDetails getPersonalDetails() {
-        return personalDetails;
-    }
-
-    public void setPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
-    }
-
-    public EducationDetails getEducationDetails() {
-        return educationDetails;
-    }
-
-    public void setEducationDetails(EducationDetails educationDetails) {
-        this.educationDetails = educationDetails;
-    }
-
-    public FamilyDetails getFamilyDetails() {
-        return familyDetails;
-    }
-
-    public void setFamilyDetails(FamilyDetails familyDetails) {
-        this.familyDetails = familyDetails;
-    }
-
-    public List<Document> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(List<Document> documents) {
-        this.documents = documents;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
 }

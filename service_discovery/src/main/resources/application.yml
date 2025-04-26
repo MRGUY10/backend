@@ -7,13 +7,13 @@ spring:
 
 eureka:
   instance:
-    hostname: 20.11.21.61
+    hostname: localhost
     prefer-ip-address: true
-    ip-address: 20.11.21.61
+    ip-address: localhost
   client:
     register-with-eureka: false
     fetch-registry: false
     serviceUrl:
-      defaultZone: http://20.11.21.61:${server.port}/eureka/
+      defaultZone: http://localhost:${server.port}/eureka/
   server:
     enableSelfPreservation: false

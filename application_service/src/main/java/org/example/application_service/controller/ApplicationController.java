@@ -30,12 +30,6 @@ public class ApplicationController {
         }
     }
 
-    // Step 2: Save Personal Details
-    @PutMapping("/{applicationId}/personal-details")
-    public ResponseEntity<Application> updatePersonalDetails(@PathVariable Long applicationId, @RequestBody PersonalDetails details) {
-        Application application = applicationService.updatePersonalDetails(applicationId, details);
-        return ResponseEntity.ok(application);
-    }
 
     // Step 3: Save Education Details
     @PutMapping("/{applicationId}/education-details")
