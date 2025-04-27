@@ -17,4 +17,4 @@ WORKDIR /app
 # Copier le JAR depuis l'étape précédente
 COPY --from=build /app/target/*.jar application2.jar
 
-ENTRYPOINT ["java", "-jar", "application2.jar.jar"]
+ENTRYPOINT ["java", "-jar", "application2.jar"]
