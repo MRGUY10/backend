@@ -22,7 +22,7 @@ public class CandidateClient {
     }
 
     public boolean validateCandidate(String candidateFullname) {
-        String url = "http://localhost:8082/api" + "/candidates/" + candidateFullname + "/exists";
+        String url = "http://20.11.21.61:8082/api" + "/candidates/" + candidateFullname + "/exists";
         try {
             return restTemplate.getForObject(url, Boolean.class);
         } catch (Exception e) {

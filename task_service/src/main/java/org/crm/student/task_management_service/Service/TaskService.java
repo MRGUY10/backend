@@ -22,9 +22,9 @@ public class TaskService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final String NOTIFICATION_SERVICE_URL = "http://localhost:8085/api/notifications/task-assignment";
-    private static final String NOTIFICATION_COMPLETION_URL = "http://localhost:8085/api/notifications/task-completion";
-    private static final String USER_EMAIL_SERVICE_URL = "http://localhost:8060/api/v1/auth/";
+    private static final String NOTIFICATION_SERVICE_URL = "http://20.11.21.61:8085/api/notifications/task-assignment";
+    private static final String NOTIFICATION_COMPLETION_URL = "http://20.11.21.61:8085/api/notifications/task-completion";
+    private static final String USER_EMAIL_SERVICE_URL = "http://20.11.21.61:8060/api/v1/auth/";
 
 
     @Autowired

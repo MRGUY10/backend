@@ -44,7 +44,7 @@ public class AuthenticationService {
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
-    @Value("http://localhost:4200/resertUrl")
+    @Value("http://20.11.21.61:4200/resertUrl")
     private String resetUrl;
 
 

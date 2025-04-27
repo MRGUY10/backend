@@ -43,7 +43,7 @@ application:
       expiration: 8640000
   mailing:
     frontend:
-      activation-url : http://localhost:4200/avtivate-account
-      resetUrl : http://localhost:4200/resertUrl
+      activation-url : http://20.11.21.61:4200/avtivate-account
+      resetUrl : http://20.11.21.61:4200/resertUrl
 server:
   port: 8087

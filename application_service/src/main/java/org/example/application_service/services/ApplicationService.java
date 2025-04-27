@@ -31,7 +31,7 @@ public class ApplicationService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private String authServiceUrl = "http://localhost:8087";
+    private String authServiceUrl = "http://20.11.21.61:8087";
 
     @Autowired
     private EducationDetailsRepository educationDetailsRepository;
