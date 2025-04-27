@@ -14,8 +14,11 @@ public class WebConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:4200","http://localhost:8100","*")); // Allow your Angular frontend
+        configuration.setAllowCredentials(true); // Required for cookies or Authorization headers
+
+        // Use allowedOriginPatterns instead of allowedOrigins for flexibility
+        configuration.setAllowedOriginPatterns(List.of("*")); // Dynamically match any origin
+
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setExposedHeaders(List.of("Authorization")); // Allow exposing authorization header
@@ -25,3 +28,4 @@ public class WebConfig {
         return source;
     }
 }
+
