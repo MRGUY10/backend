@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
- @CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {

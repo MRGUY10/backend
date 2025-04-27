@@ -1,5 +1,7 @@
 package org.example.application_service.services;
 
+import jakarta.transaction.Transactional;
+import org.example.application_service.DTO.ApplicationRequest;
 import org.example.application_service.Request.MatriculeUpdateRequest;
 import org.example.application_service.models.*;
 import org.example.application_service.repo.*;
@@ -15,10 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ApplicationService {
@@ -42,6 +41,64 @@ public class ApplicationService {
 
     @Autowired
     private DocumentRepository documentRepository;
+
+    public ApplicationService(ApplicationRepository applicationRepository,
+                              DocumentRepository documentRepository) {
+        this.applicationRepository = applicationRepository;
+        this.documentRepository = documentRepository;
+    }
+
+    @Transactional
+    public Application saveCompleteApplication(ApplicationRequest request, List<MultipartFile> documentFiles) {
+        // Create and save the main application
+        Application application = new Application();
+        application.setMatricule(request.getMatricule());
+        application.setFirstName(request.getFirstName());
+        application.setLastName(request.getLastName());
+        application.setNationality(request.getNationality());
+        application.setRegionOfOrigin(request.getRegionOfOrigin());
+        application.setAddress(request.getAddress());
+        application.setWhatsappNumber(request.getWhatsappNumber());
+        application.setEmail(request.getEmail());
+        application.setDateOfBirth(request.getDateOfBirth());
+        application.setPhoneNumber(request.getPhoneNumber());
+        application.setProgram(request.getProgram());
+        application.setStatus(ApplicationStatus.SUBMITTED);
+
+        // Set and save family details
+        FamilyDetails familyDetails = request.getFamilyDetails();
+        familyDetails.setApplication(application);
+        application.setFamilyDetails(familyDetails);
+
+        // Set and save education details
+        EducationDetails educationDetails = request.getEducationDetails();
+        educationDetails.setApplication(application);
+        application.setEducationDetails(educationDetails);
+
+        // Save the application (cascade will save family and education details)
+        Application savedApplication = applicationRepository.save(application);
+
+        // Process and save documents if provided
+        if (documentFiles != null && !documentFiles.isEmpty()) {
+            List<Document> documents = new ArrayList<>();
+            for (MultipartFile file : documentFiles) {
+                try {
+                    Document document = new Document();
+                    document.setDocumentType(file.getOriginalFilename().contains("id") ? "ID_CARD" : "OTHER");
+                    document.setDocumentContent(file.getBytes());
+                    document.setApplication(savedApplication);
+                    documents.add(document);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to process document: " + file.getOriginalFilename(), e);
+                }
+            }
+            documentRepository.saveAll(documents);
+            savedApplication.setDocuments(documents);
+        }
+
+        return savedApplication;
+    }
+
 
     // Step 1: Initialize application
     public Application initializeApplication(Application application) {

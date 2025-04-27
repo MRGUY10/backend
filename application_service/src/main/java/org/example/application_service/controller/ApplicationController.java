@@ -1,10 +1,13 @@
 package org.example.application_service.controller;
 
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
+import org.example.application_service.DTO.ApplicationRequest;
 import org.example.application_service.models.*;
 import org.example.application_service.services.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +17,33 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
-@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8100"})
+@CrossOrigin(origins = "*")
 public class ApplicationController {
-    @Autowired
-    private ApplicationService applicationService;
+
+    private final ApplicationService applicationService;
+    private final ObjectMapper objectMapper;
+
+    public ApplicationController(ApplicationService applicationService, ObjectMapper objectMapper) {
+        this.applicationService = applicationService;
+        this.objectMapper = objectMapper;
+    }
+
+    // Complete submission with file uploads
+    @PostMapping(value = "/complete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> submitCompleteApplication(
+            @RequestPart("application") @Valid String applicationJson,
+            @RequestPart(value = "documents", required = false) List<MultipartFile> documents) {
+
+        try {
+            ApplicationRequest request = objectMapper.readValue(applicationJson, ApplicationRequest.class);
+            Application savedApplication = applicationService.saveCompleteApplication(request, documents);
+            return new ResponseEntity<>(savedApplication, HttpStatus.CREATED);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body("Invalid JSON format: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error processing request: " + e.getMessage());
+        }
+    }
 
     // Step 1: Initialize Application
     @PostMapping("/init")
