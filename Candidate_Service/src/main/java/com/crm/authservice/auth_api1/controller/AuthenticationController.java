@@ -27,7 +27,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("candidate")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8100","*"})
+
 @Tag(name = "Authentication Controller", description = "Handles user authentication and account management")
 public class AuthenticationController {
 
@@ -226,13 +227,4 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    @PutMapping("/update-matricule/{oldMatricule}")
-    public ResponseEntity<User> updateMatricule(
-            @PathVariable String oldMatricule,
-            @RequestParam String newMatricule) {
-        User updatedUser = authenticationService.updateMatricule(oldMatricule, newMatricule);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-
 }
