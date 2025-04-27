@@ -57,12 +57,12 @@ application:
       expiration: 8640000
   mailing:
     frontend:
-      activation-url : http://localhost:4200/avtivate-account
-      resetUrl : http://localhost:4200/resertUrl
+      activation-url : http://20.11.21.61:4200/avtivate-account
+      resetUrl : http://20.11.21.61:4200/resertUrl
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://20.11.21.61:8761/eureka/
 
 management:
   tracing:

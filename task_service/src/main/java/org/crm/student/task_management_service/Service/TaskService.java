@@ -36,22 +36,6 @@ public class TaskService {
 
     public Task createTask(Task task) {
 
-
-        // Validate assignedTo user
-        boolean isUserValid = userClient.validateUser(task.getAssignedTo());
-
-        if (!isUserValid) {
-            throw new IllegalArgumentException("Invalid assignedTo: " + task.getAssignedTo());
-        }
-
-        if (!"no association".equals(task.getCandidateFullname())) {
-            boolean isCandidateValid = candidateClient.validateCandidate(task.getCandidateFullname());
-
-            if (!isCandidateValid) {
-                throw new IllegalArgumentException("Invalid candidateName: " + task.getCandidateFullname());
-            }
-        }
-
         // Save the task
         Task savedTask = taskRepository.save(task);
         String assignedToEmail = getAssignedToEmail(task.getAssignedTo());
